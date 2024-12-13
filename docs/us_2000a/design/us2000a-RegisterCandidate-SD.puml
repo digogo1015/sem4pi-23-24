@@ -1,0 +1,129 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2000a
+
+
+actor "Operator" as User
+participant "RegisterCandidateUI" as UI
+participant ":RegisterCandidateControllerEvent" as Controller
+participant ":UserBuilder" as Builder
+participant "user:SystemUser" as SysUs
+
+
+participant "PersistenceContext" as PersistenceContext
+participant ":UserRepository" as UsRep
+participant "Dispatcher" as Dispatcher
+participant "NewUserForCandidateEvent" as Event
+participant "NewUserForCandidateWatchDog" as Dog
+participant "AddCandidateOnUserCreationController" as EController
+participant ":CandidateBuilder" as CBuilder
+participant "RepositoryFactory" as Rep
+participant ":CandidateRepository" as CanRepo
+
+activate User
+
+User -> UI : show()
+
+UI -> UI : doShow()
+activate UI
+
+UI -> Controller : create()
+
+UI --> User : Ask candidate information
+
+User -> UI : First Name, Last Name, \n, Phone Number, Email, Password
+
+UI -> Controller : registerCandidate(firsName, lastName, \n phoneNumber, email, password)
+activate Controller
+
+
+Controller -> Builder : create()
+
+Controller -> Builder : with(firstName, lastName, phoneNumber, email, password)
+
+
+Controller -> Builder : build()
+activate Builder
+
+Builder -> SysUs : create (firstName, lastName, phoneNumber, email, password)
+activate SysUs
+
+SysUs --> Builder : user
+deactivate SysUs
+
+Builder --> Controller : user
+deactivate Builder
+
+Controller -> PersistenceContext : repositories()
+activate PersistenceContext
+
+PersistenceContext -> Rep : create
+
+PersistenceContext --> Controller : factory
+deactivate PersistenceContext
+
+Controller -> Rep : users()
+activate Rep
+
+Rep -> UsRep : create
+
+Rep --> Controller : UsRep
+deactivate Rep
+
+Controller -> UsRep : save(user)
+
+Controller -> Event : create(email, firstName, lastName, phoneNumber))
+activate Event
+
+Event --> Controller : event
+deactivate Event
+
+Controller -> Dispatcher : publish(event)
+
+Controller --> UI : operations success
+deactivate Controller
+
+Dispatcher -> Dog : handle(event)
+activate Dog
+
+Dog -> EController : create
+
+Dog -> EController : addCandidate(event)
+activate EController
+
+EController -> Rep : candidates()
+activate Rep
+
+Rep -> CanRepo : create
+
+Rep --> EController : candidateRepo
+deactivate Rep
+
+EController -> CBuilder : create()
+
+EController -> CBuilder : with(user, firsName, lastName, email, phoneNumber)
+
+EController -> CBuilder : build()
+activate CBuilder
+
+CBuilder -> Candidate : create (user, firsName, lastName, email, phoneNumber)
+activate Candidate
+
+Candidate --> CBuilder : candidate
+deactivate Candidate
+
+CBuilder --> EController : candidate
+deactivate CBuilder
+
+
+EController -> CanRepo : save(candidate)
+
+UI --> User : display operation success Info
+deactivate UI
+
+
+
+@enduml

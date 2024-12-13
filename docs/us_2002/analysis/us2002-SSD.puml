@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2002
+
+autonumber
+
+actor "Operator" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to register an application
+        activate System
+
+    System--> User : displays candidates
+        deactivate System
+
+    User -> System: selects candidates
+        activate System
+
+    System--> User : displays job openings
+        deactivate System
+
+    User -> System: selects job opening
+        activate System
+
+    System--> User : asks for id and path to folder
+        deactivate System
+
+    User -> System: provides id and path to folder
+        activate System
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

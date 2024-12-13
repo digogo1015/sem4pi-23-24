@@ -1,0 +1,73 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1000
+
+
+
+actor "Admin" as User
+participant "ListBackOfficeUsersUI" as UI
+participant ":ListBackOfficeUsersController" as Controller
+participant ":UserManagementService" as Service
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":UserRepository" as UsRep
+
+
+activate User
+
+    User -> UI : show()
+
+
+        UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : allBackOfficeUsers()
+    activate Controller
+
+    Controller -> Service : allUsers()
+    activate Service
+
+    Service -> PersistenceContext : repositories()
+    activate PersistenceContext
+
+    PersistenceContext -> Rep : create()
+    activate Rep
+
+    Rep --> PersistenceContext
+    deactivate Rep
+
+    PersistenceContext --> Service : factory
+    deactivate PersistenceContext
+
+    Service -> Rep : users()
+    activate Rep
+
+    Rep -> UsRep : create()
+
+    Rep --> Service : userRepository
+    deactivate Rep
+
+    Service -> UsRep : findAll()
+    activate UsRep
+
+    UsRep --> Service :
+    deactivate UsRep
+
+    Service --> Controller : allUsers
+    deactivate Service
+
+    Controller --> UI : backofficeUsers
+    deactivate Controller
+
+    UI --> User : displays list of\n backoffice Users
+    deactivate UI
+
+    deactivate Rep
+
+@enduml

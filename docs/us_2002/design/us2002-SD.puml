@@ -1,0 +1,144 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2002
+
+actor "Operator" as User
+participant "RegisterApplicationUI" as UI
+participant ":RegisterApplicationController" as Controller
+
+participant "PersistenceContext" as PC
+participant "RepositoryFactory" as Rep
+participant "ApplicationRepository" as APPRep
+participant "CandidateRepository" as CANRep
+participant "JobOpeningRepository" as JOBRep
+participant ":ApplicationBuilder" as AppBuilder
+participant ":Application" as APP
+
+activate User
+
+    User -> UI : asks to register \n an application
+
+    UI -> UI : doShow()
+    activate UI
+
+    UI -> Controller : create
+    activate Controller
+
+    Controller -> PC : repositories()
+    activate PC
+
+    PC -> Rep : create
+
+
+    PC -> Controller : factory
+    deactivate PC
+
+    Controller -> Rep : applications()
+    activate Rep
+
+    Rep -> APPRep : create
+
+    Rep -> Controller : APPRep
+    deactivate Rep
+
+    Controller -> PC : repositories()
+
+    activate PC
+
+    PC -> Controller : factory
+    deactivate PC
+
+    Controller -> Rep : candidates()
+    activate Rep
+
+    Rep -> CANRep : create
+
+    Rep -> Controller : CANRep
+    deactivate Rep
+
+    Controller -> PC : repositories()
+
+    activate PC
+
+    PC -> Controller : factory
+    deactivate PC
+
+    Controller -> Rep : jobOpenings()
+    activate Rep
+
+    Rep -> JOBRep : create
+
+    Rep -> Controller : JOBRep
+    deactivate Rep
+
+    Controller -> UI :
+    deactivate Controller
+
+    UI -> Controller : allCandidates()
+    activate Controller
+
+    Controller -> CANRep : findAll()
+    activate CANRep
+
+    CANRep -> Controller : list of candidates
+    deactivate CANRep
+
+    Controller -> UI : list of candidates
+    deactivate Controller
+
+    UI -> User : displays candidates
+
+    User -> UI : selects candidates
+
+    UI -> Controller : allJobOpenings()
+    activate Controller
+
+    Controller -> JOBRep : findAll()
+    activate JOBRep
+
+    JOBRep -> Controller : list of job openings
+    deactivate JOBRep
+
+    Controller -> UI : list of job openings
+    deactivate Controller
+
+    UI -> User : displays job openings
+
+    User -> UI : selects job openings
+
+    UI -> User : asks for id and path to folder
+
+    User -> UI : provides id and path to folder
+
+    UI -> Controller : registerApplication()
+    activate Controller
+
+    Controller -> AppBuilder : withApplicationId()
+    Controller -> AppBuilder : withDate()
+    Controller -> AppBuilder : withPathApplicationFolder()
+    Controller -> AppBuilder : withCandidate()
+    Controller -> AppBuilder : withJobOpening()
+    Controller -> AppBuilder : build()
+
+    activate AppBuilder
+
+    AppBuilder -> APP : create
+
+    AppBuilder -> Controller : application
+    deactivate AppBuilder
+
+    Controller -> APPRep : save()
+    activate APPRep
+
+    APPRep -> Controller :
+    deactivate APPRep
+
+    Controller -> UI :
+    deactivate Controller
+
+    UI -> User : shows operation success
+
+@enduml

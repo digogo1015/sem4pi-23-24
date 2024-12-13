@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1018
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to execute the evaluation process for interviews
+        activate System
+
+    System--> User : shows list of jobOpenings available
+        deactivate System
+
+    User -> System: selects jobOpenings (jobOpening)
+        activate System
+
+
+    System--> User : executes evaluation process for\n all interviews and shows operation success
+        deactivate System
+
+@enduml

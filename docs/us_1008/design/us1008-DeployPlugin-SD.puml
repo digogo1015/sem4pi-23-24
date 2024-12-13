@@ -1,0 +1,94 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1008
+
+
+actor "Language Engineer" as User
+participant "DeployPluginUI" as UI
+participant ":RegisterPluginController" as Controller
+
+
+participant "PersistenceContext" as PersistenceContext
+participant "PluginImporter" as Importer
+participant ":PluginBuilder" as Builder
+participant "RepositoryFactory" as Rep
+participant ":PluginRepository" as PlugRep
+participant ":Plugin" as Plug
+
+
+
+activate User
+
+User -> UI : show()
+
+UI -> UI : doShow()
+activate UI
+
+UI -> Controller : create()
+
+UI --> User : Ask user information
+
+User --> UI : designation, description,\n plugin type, classPath
+
+UI -> Controller : deployPlugin(designation,description,\nclasspath,pluginType)
+activate Controller
+
+
+Controller -> Builder : create()
+
+Controller -> Builder : with(designation,description,\nclasspath,pluginType)
+
+
+Controller -> Builder : build()
+activate Builder
+
+Builder -> Plug : create (designation,description,\nclasspath,pluginType)
+activate Plug
+
+Plug --> Builder : plugin
+deactivate Plug
+
+Builder --> Controller : plugin
+deactivate Builder
+
+Controller -> Importer : plugin.buildImporter()
+activate Importer
+
+Importer --> Controller : importer
+deactivate Importer
+
+Controller -> Importer : checkPlugin()
+activate Importer
+
+Importer --> Controller : operation success
+deactivate Importer
+
+Controller -> PersistenceContext : repositories()
+activate PersistenceContext
+
+PersistenceContext -> Rep : create
+
+PersistenceContext --> Controller : factory
+deactivate PersistenceContext
+
+Controller -> Rep : plugins()
+activate Rep
+
+Rep -> PlugRep : create
+
+Rep --> Controller : repository
+deactivate Rep
+
+Controller -> PlugRep : save(plugin)
+
+Controller --> UI
+deactivate Controller
+
+UI --> User: operation success
+deactivate UI
+
+
+@enduml

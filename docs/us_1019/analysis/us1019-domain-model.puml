@@ -1,0 +1,54 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model - US1019
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class JobReference <<Value Object>> {}
+
+}
+
+package ApplicationAggregate {
+
+class Application <<Entity>> \n <<root>>{}
+class ApplicationID <<ValueObject>>{}
+class Interview<<Entity>>{}
+class Score <<ValueObject>>
+class InterviewStatus <<ValueObject>>
+
+package CandidateAggregate {
+
+class Candidate <<Entity>> \n <<root>>{
+}
+class FirstName <<Value Object>>
+class LastName <<Value Object>>
+class PhoneNumber <<Value Object>>{}
+}
+
+class EMail <<Value Object>>{}
+
+
+JobOpening "0..1" --> "1" JobReference : identified by
+
+
+Application "*" --> "1" JobOpening : submitted for
+Application "*" --> "1" Candidate : submitted by
+Application "1" --> "1" ApplicationID : identified by
+Application "1" --> "0..1" Interview : origins
+
+
+Interview "1" --> "0..1" Score : is marked by
+Interview "1" --> "1" InterviewStatus :  presents itself in
+
+
+Candidate "1" --> "1" EMail : identified by
+Candidate "1" --> "1" PhoneNumber : uses
+Candidate "1" --> "1" FirstName : called by
+Candidate "1" --> "1" LastName : called by
+
+@enduml

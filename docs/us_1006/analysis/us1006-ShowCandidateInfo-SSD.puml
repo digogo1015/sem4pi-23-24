@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1006
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to show candidate information
+        activate System
+
+    System--> User : shows candidates list
+        deactivate System
+
+    User -> System: selects candidate to show information
+        activate System
+
+
+    System--> User : displays information
+        deactivate System
+
+@enduml

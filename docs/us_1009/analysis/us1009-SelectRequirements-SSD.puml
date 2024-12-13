@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1009
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to select a requirement\n specification for a job opening
+        activate System
+
+    System--> User : lists job openings
+        deactivate System
+
+    User -> System: selects a job opening
+        activate System
+
+        System--> User : lists requirement specification\n plugins in the system
+            deactivate System
+
+        User -> System: selects a requirement specification
+            activate System
+
+            System--> User : shows operation success
+                deactivate System
+
+@enduml

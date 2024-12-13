@@ -1,0 +1,132 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1001
+
+
+actor "Admin" as User
+participant "RegisterCustomerUI" as UI
+participant ":RegisterCustomerControllerEvent" as Controller
+participant ":UserBuilder" as Builder
+participant "user:SystemUser" as SysUs
+
+
+participant "PersistenceContext" as PersistenceContext
+participant ":UserRepository" as UsRep
+participant "Dispatcher" as Dispatcher
+participant "NewUserForCustomerEvent" as Event
+participant "NewUserForCustomerWatchDog" as Dog
+participant "AddCustomerOnUserCreationController" as EController
+participant ":CustomerBuilder" as CBuilder
+participant "RepositoryFactory" as Rep
+participant ":CustomerRepository" as CusReo
+
+
+
+activate User
+
+User -> UI : show()
+
+UI -> UI : doShow()
+activate UI
+
+UI -> Controller : create()
+
+UI --> User : Ask user information
+
+User --> UI : Password, Company name, \n, E-mail, Street, City, State, \n Customer Code
+
+UI -> Controller : registerCustomer(customerCode,\n companyName, email, street,\n city, state, email, password)
+activate Controller
+
+
+
+Controller -> Builder : create()
+
+Controller -> Builder : with(username, password, name, email, roles)
+
+
+Controller -> Builder : build()
+activate Builder
+
+Builder -> SysUs : create (username, password, name, email, roles)
+activate SysUs
+
+SysUs --> Builder : user
+deactivate SysUs
+
+Builder --> Controller : user
+deactivate Builder
+
+Controller -> PersistenceContext : repositories()
+activate PersistenceContext
+
+PersistenceContext -> Rep : create
+
+PersistenceContext --> Controller : factory
+deactivate PersistenceContext
+
+Controller -> Rep : users()
+activate Rep
+
+Rep -> UsRep : create
+
+Rep --> Controller : UsRep
+deactivate Rep
+
+Controller -> UsRep : save(user)
+
+Controller -> Event : create(customerCode, user, street, city, state)
+activate Event
+
+Event --> Controller : event
+deactivate Event
+
+Controller -> Dispatcher : publish(event)
+
+Controller --> UI : user
+deactivate Controller
+
+Dispatcher -> Dog : handle(event)
+activate Dog
+
+Dog -> EController : create
+
+Dog -> EController : addCustomer(event)
+activate EController
+
+EController -> Rep : customers()
+activate Rep
+
+Rep -> CusReo : create
+
+Rep --> EController : customerRepo
+deactivate Rep
+
+EController -> CBuilder : create()
+
+EController -> CBuilder : with(user, address, customerCode, manager)
+
+EController -> CBuilder : build()
+activate CBuilder
+
+CBuilder -> Customer : create (user, address, customerCode, manager)
+activate Customer
+
+Customer --> CBuilder : customer
+deactivate Customer
+
+CBuilder --> EController : customer
+deactivate CBuilder
+
+
+EController -> CusReo : save(customer)
+
+UI --> User : display User Info
+deactivate UI
+
+
+
+@enduml

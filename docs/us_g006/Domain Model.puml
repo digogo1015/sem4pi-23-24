@@ -1,0 +1,173 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class JobOpeningState <<ValueObject>>
+class Title <<ValueObject>>
+class NumberOfVacancies <<ValueObject>>
+class Description <<ValueObject>>
+class ContractType <<Value Object>> {}
+class Mode <<Value Object>> {}
+class JobReference <<Value Object>> {}
+class RecruitmentProcess <<Entity>>{}
+class Phase <<Entity>>{}
+class PhaseName <<ValueObject>>
+class BeginningDate <<ValueObject>>
+class EndDate <<ValueObject>>
+class PhaseState <<ValueObject>>
+
+}
+
+package ApplicationAggregate {
+
+class Application <<Entity>> \n <<root>>{}
+class ApplicationID <<ValueObject>>{}
+class Interview<<Entity>>{}
+class InterviewSchedule<<ValueObject>>{}
+class SubmissionDate <<ValueObject>>
+class InterviewTimeDate<<ValueObject>>
+class Score <<ValueObject>>
+class ApplicationState <<ValueObject>>
+class InterviewAnswersFile <<ValueObject>>
+class ApplicationInfoFile <<ValueObject>>
+class ScreeningResult <<ValueObject>>
+class ApplicationRequirementsFile <<ValueObject>>
+
+class InterviewStatus <<ValueObject>>
+
+}
+package CustomerAggregate {
+
+class Customer <<Entity>> \n <<root>>{}
+class CompanyName <<ValueObject>>
+class CustomerCode <<Value Object>>{}
+}
+
+package CandidateAggregate {
+
+class Candidate <<Entity>> \n <<root>>{
+}
+
+class FirstName <<Value Object>>
+class LastName <<Value Object>>
+
+class PhoneNumber <<Value Object>>{}
+}
+
+package PluginAggregate {
+class Plugin <<Entity>> \n <<root>>{
+}
+class PluginType  <<Value Object>>
+
+class Designation <<Value Object>>
+
+class PluginDescription <<Value Object>>
+
+class InterviewModel<<Value Object>>{}
+
+class RequirementsSpecification <<Value Object>>{}
+}
+
+class Address <<Value Object>> {}
+
+class EMail <<Value Object>>{}
+
+package NotificationAggregate{
+class Notification <<Entity>>{}
+class ID <<ValueObject>>
+class NotificationDate <<ValueObject>>
+class NotificationState <<ValueObject>>
+class NotificationType <<ValueObject>>
+class SenderEmail <<ValueObject>>
+class ReceiverEmail <<ValueObject>>
+class Message <<ValueObject>>
+}
+
+
+package RankAggregate {
+class Ranking <<Entity>> \n <<root>>{}
+class Order <<Value Object>>
+class Rank <<Value Object>>
+}
+
+
+
+'class SelectionResult <<ValueObject>>{}
+Plugin "1" --> "1" PluginType : characterized by
+PluginType <|-- RequirementsSpecification
+PluginType <|-- InterviewModel
+
+Plugin "1" --> "1" Designation : identified by
+Plugin "1" --> "1" PluginDescription : described by
+
+JobOpening "0..1" --> "1" JobReference : identified by
+JobOpening "*" --> "1" ContractType : characterized by
+JobOpening "*" --> "1" Mode : characterized by
+JobOpening "*" --> "1" Address : is located
+JobOpening "*" ---> "0..2" Plugin : selects
+JobOpening "*" -->  "1" Customer : requested by
+JobOpening "1" -- "1" NumberOfVacancies : includes
+JobOpening "1" --> "1" Description : described by
+JobOpening "*" --> "1" Title : characterized by
+JobOpening "*" --> "0..1" RecruitmentProcess : selects
+JobOpening "1" -- "1" JobOpeningState : presents itself in
+
+
+Application "*" --> "1" JobOpening : submitted for
+Application "*" --> "1" Candidate : submitted by
+Application "1" --> "1" ApplicationID : identified by
+Application "1" --> "1" SubmissionDate : submitted on
+Application "1" --> "0..1" Interview : origins
+Application "1" --> "0..1" Rank : ordered by
+Application "1" --> "1" ApplicationState : presents itself in
+Application "1" --> "1*" ApplicationInfoFile : is described by
+Application "1" --> "0..1" ApplicationRequirementsFile : origins
+ApplicationRequirementsFile "1" --> "0..1" ScreeningResult : results
+
+
+Interview "1" --> "0..1" InterviewSchedule : is scheduled to
+Interview "1" --> "0..1" Score : is marked by
+Interview "1" --> "0..1" InterviewAnswersFile : results in
+Interview "1" --> "1" InterviewStatus :  presents itself in
+
+InterviewSchedule "1" --> "1" InterviewTimeDate : occurs on
+
+Customer "1" --> "1" CustomerCode : identified by
+Customer "1" --> "1" EMail : uses
+Customer "*" --> "1" Address : is located
+Customer "1" --> "1" CompanyName : is named
+
+Candidate "1" --> "1" EMail : identified by
+Candidate "1" --> "1" PhoneNumber : uses
+Candidate "1" --> "1" FirstName : called by
+Candidate "1" --> "1" LastName : called by
+
+RecruitmentProcess *-- Phase
+Phase "1" --> "1" PhaseName : named
+Phase "1" --> "1" BeginningDate : begins at
+Phase "1" --> "1" EndDate : ends at
+Phase "1" --> "1" PhaseState : presents itself in
+
+Notification "1" --> "1" NotificationDate : sent at
+Notification "1" --> "1" SenderEmail : sent by
+Notification "1" --> "1" ReceiverEmail : sent to
+ReceiverEmail "1" --> "1" EMail : derives from
+Notification "1" --> "1" Message : has
+Notification "1" --> "1" ID : identified by
+Notification "*" --> "1" NotificationState : characterized by
+Notification "*" --> "1" NotificationType : characterized by
+
+
+Ranking "1" --> "1" JobOpening : is about
+Ranking "1" -> "1.*" Order : defined by
+Order "1" -> "1" Rank : defined
+Order "1" -> "1.*" Application : defined
+
+@enduml

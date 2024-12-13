@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1004
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to edit a job Opening
+        activate System
+
+    System--> User : shows job Openings and \n asks to select one
+        deactivate System
+
+    User -> System: selects a job Opening
+        activate System
+
+    System--> User : shows editable attributes
+        deactivate System
+
+    User -> System: chooses a editable attribute
+            activate System
+
+    System--> User : asks for new value
+        deactivate System
+
+    User -> System: provides new value
+        activate System
+
+    System--> User : shows operation sucess
+        deactivate System
+
+
+
+
+
+@enduml

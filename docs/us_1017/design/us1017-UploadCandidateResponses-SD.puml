@@ -1,0 +1,75 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1017
+
+actor "Customer Manager" as User
+participant "UploadInterviewAnswerFileUI" as UI
+participant ":UploadInterviewAnswerFileController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+participant ":PluginService" as PlSvc
+participant "Plugin" as Plugin
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsWithInterviewSpecification()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsWithInterviewSpecification()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+
+UI --> User : shows list of jobOpenings available
+
+User --> UI : selects jobOpenings (jobOpening)
+
+UI --> Controller :applicationsOfJobOpening(jobOpening)
+
+
+Controller --> AppRep : applicationsOfJobOpening(jobOpening)
+activate AppRep
+
+AppRep --> Controller : list of applications
+deactivate AppRep
+
+
+Controller --> UI : list of applications
+
+UI --> Controller : checkFiles(requirementsSpecification ,applications)
+
+Controller --> PlSvc : checkInterviewFiles(plugin, applications)
+activate PlSvc
+
+loop For each Application
+PlSvc --> Plugin : checkInterviewFile(pathApplicationAnswerFile)
+activate Plugin
+
+Plugin --> PlSvc
+
+deactivate Plugin
+end
+
+PlSvc --> Controller : invalid applications
+
+deactivate PlSvc
+
+Controller --> UI : invalid applications
+deactivate Controller
+UI --> User : shows invalid applications
+deactivate UI
+
+@enduml

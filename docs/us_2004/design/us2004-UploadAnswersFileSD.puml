@@ -1,0 +1,75 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1019
+
+actor "Operator" as User
+participant "UploadRequirementsAnswerFileUI" as UI
+participant ":UploadRequirementsAnswerFileController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+participant ":PluginService" as PlSvc
+participant "Plugin" as Plugin
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsWithRequirementsSpecification()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsWithRequirementsSpecification()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+
+UI --> User : shows list of jobOpenings available
+
+User --> UI : selects jobOpenings (jobOpening)
+
+UI --> Controller :applicationsOfJobOpening(jobOpening)
+
+
+Controller --> AppRep : applicationsOfJobOpening(jobOpening)
+activate AppRep
+
+AppRep --> Controller : list of applications
+deactivate AppRep
+
+
+Controller --> UI : list of applications
+
+UI --> Controller : checkFiles(requirementsSpecification ,applications)
+
+Controller --> PlSvc : checkRequirementsFiles(plugin, applications)
+activate PlSvc
+
+loop For each Application
+PlSvc --> Plugin : checkRequirementFile(pathApplicationAnswerFile)
+activate Plugin
+
+Plugin --> PlSvc
+
+deactivate Plugin
+end
+
+PlSvc --> Controller : invalid applications
+
+deactivate PlSvc
+
+Controller --> UI : invalid applications
+deactivate Controller
+UI --> User : shows invalid applications
+deactivate UI
+
+@enduml

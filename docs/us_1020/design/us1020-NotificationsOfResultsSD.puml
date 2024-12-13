@@ -1,0 +1,89 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1020
+
+actor "Customer Manager" as User
+participant "PublishResultsUI" as UI
+participant ":PublishResultsController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":RankingRepository" as RankRep
+participant ":Application" as App
+
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsInResults()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsInResults()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+
+UI --> User : shows list of jobOpenings available
+
+User -> UI : selects jobOpenings (jobOpening)
+
+UI -> Controller :findRankingByJobReference(jobOpening)
+
+
+Controller -> RankRep : applicationsOfJobOpening(jobReference)
+activate RankRep
+
+RankRep --> Controller : ranking
+deactivate RankRep
+
+Controller --> UI : ranking
+
+UI --> User : shows candidates and \n customer to notify and\n asks to confirm
+
+
+User -> UI : confirms
+
+loop for each order of ranking
+
+alt true
+note left of UI
+    i <= numberOfVacancies
+end note
+    UI -> Controller : defineApplicationStateAccepted(application)
+    Controller -> App : defineApplicationState(ACCEPTED)
+    activate App
+
+    App --> Controller
+    deactivate App
+    Controller --> UI : operator success
+else false
+note left of UI
+    i > numberOfVacancies
+end note
+   UI -> Controller : defineApplicationStateRejected(REJECTED)
+      Controller -> App : defineApplicationState(ACCEPTED)
+      activate App
+
+      App --> Controller
+      deactivate App
+      Controller --> UI : operator success
+      deactivate Controller
+end
+end
+      UI --> User : operator success
+deactivate UI
+
+
+
+
+@enduml

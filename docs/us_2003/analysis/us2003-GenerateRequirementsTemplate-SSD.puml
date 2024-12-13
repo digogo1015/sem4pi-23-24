@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2003
+
+autonumber
+
+actor "Operator" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to generate requirement template
+        activate System
+
+    System--> User : displays job openings
+        deactivate System
+
+    User -> System: selects job opening
+        activate System
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

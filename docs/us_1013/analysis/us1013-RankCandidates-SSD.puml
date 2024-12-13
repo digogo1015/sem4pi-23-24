@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1013
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: Asks to Rank Candidates
+        activate System
+
+    System--> User : Lists job Openings with Analysis Phase
+        deactivate System
+
+    User -> System: Selects Job Opening
+        activate System
+
+loop for each Application of the Job Opening
+    System--> User : Lists Application and asks Rank
+        deactivate System
+
+    User -> System: Types Rank for the Candidate's Application
+        activate System
+end
+    System--> User : Shows operation Success
+        deactivate System
+
+
+@enduml

@@ -1,0 +1,142 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1013
+
+actor "Customer Manager" as User
+participant "RankCandidatesUI" as UI
+participant ":RankCandidateController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+participant ":RankRepository" as RankRep
+participant ":RankService" as RankSvc
+participant ":Ranking" as Ranking
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsInAnalysis()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsInAnalysis()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+
+UI --> User : shows list of jobOpenings available
+
+User --> UI : selects jobOpenings (jobOpening)
+
+UI --> Controller :applicationsOfJobOpening(jobOpening)
+
+Controller --> AppRep : applicationsOfJobOpening(jobOpening)
+activate AppRep
+
+AppRep --> Controller : list of applications
+
+deactivate AppRep
+
+Controller --> UI : list of applications
+
+loop For each Application
+UI --> User : asks to rank candidate
+
+User --> UI : types rank
+end
+
+UI --> Controller : checkIfRankExists(job reference)
+
+Controller --> RankRep : findAll()
+activate RankRep
+
+RankRep --> Controller : all applications
+deactivate RankRep
+
+Controller --> RankSvc : checkIfRankExists(jobReference, applications)
+activate RankSvc
+
+alt true / false
+RankSvc --> RankSvc : checkIfRankExists(jobReference, applications)
+end
+
+RankSvc --> Controller : exists (true / false)
+
+deactivate RankSvc
+
+
+
+alt true
+Controller --> Controller : saveRank(jobReference, ranking)
+Controller --> Ranking : create()
+activate Ranking
+Ranking --> Controller : newRank
+deactivate Ranking
+
+Controller --> RankRep : save(newRank)
+activate RankRep
+RankRep --> Controller : operation success
+deactivate RankRep
+
+
+else false
+Controller --> RankSvc : editRank(jobReference, ranking)
+activate RankSvc
+
+RankSvc --> Ranking : create()
+activate Ranking
+Ranking --> RankSvc : newRank
+deactivate Ranking
+
+RankSvc --> RankRep : allRanks()
+activate RankRep
+RankRep --> RankSvc : all ranks
+deactivate RankRep
+
+loop for each rank
+RankSvc --> RankSvc : findRankByJobReference(job reference)
+end
+
+RankSvc --> RankRep : removeRank()
+activate RankRep
+
+RankRep --> RankSvc :
+deactivate RankRep
+
+RankSvc --> Ranking : defineRanking(ranking)
+activate Ranking
+
+Ranking --> RankSvc
+deactivate Ranking
+
+RankSvc --> RankRep : saveRank()
+activate RankRep
+
+RankRep --> RankSvc :
+deactivate RankRep
+
+RankSvc --> Controller : operation success
+deactivate RankSvc
+
+
+end
+
+Controller --> UI : operation success
+
+deactivate Controller
+
+
+UI --> User : operation success
+
+deactivate UI
+@enduml

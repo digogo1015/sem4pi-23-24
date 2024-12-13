@@ -1,0 +1,97 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2000a
+
+
+actor "Customer manager" as User
+participant "SetupPhasesUI" as UI
+participant ":SetupPhasesController" as Controller
+participant "listJobOpeningController" as listController
+participant ":JobOpeningRepository" as CRep
+participant ":JobOpeningRepository" as JORep
+participant "Phase" as phase
+participant "recruitmentProcess:RecruitmentProcess" as recProcess
+participant "jobOpening:JobOpening" as jobOpe
+
+
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : findAll()
+activate Controller
+
+Controller ->  listController : findAll()
+activate listController
+
+
+listController ->  CRep : findAll()
+activate CRep
+
+CRep --> listController : jobOpeningList
+deactivate
+
+
+listController --> Controller : jobOpeningList
+deactivate
+
+
+Controller --> UI : jobOpeningList
+deactivate
+
+UI --> User : show jobOpeningList and\n askes to select one
+
+User -> UI : types requested data (jobOpening,\n hasInterview, dates)
+
+UI -> jobOpe : selects
+activate jobOpe
+
+jobOpe --> UI : jobOpening
+deactivate
+
+
+UI -> Controller : setupPhases(jobOpening,\nhasInterview,dates)
+activate Controller
+
+Controller -> phase : create()
+activate phase
+
+phase --> Controller : phases
+deactivate
+
+Controller -> recProcess : crete()
+activate recProcess
+
+recProcess --> Controller : recruitmentProcess
+deactivate
+
+Controller -> jobOpe : setupPhases(recruitmentProcess)
+
+
+
+Controller -> JORep : save(jobOpening)
+
+Controller --> UI : show operation sucess
+deactivate
+
+UI --> User : show operation sucess
+
+
+
+
+
+
+
+
+
+
+@enduml

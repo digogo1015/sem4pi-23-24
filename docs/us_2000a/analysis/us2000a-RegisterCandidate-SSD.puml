@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2000a
+
+autonumber
+
+actor "Operator" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to register a candidate
+        activate System
+
+    System--> User : requests data
+        deactivate System
+
+    User -> System: types requested data (first name,\n last name, phoneNumber, email, password)
+        activate System
+
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

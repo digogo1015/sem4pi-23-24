@@ -1,0 +1,22 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1000
+
+autonumber
+
+actor "Admin" as Admin
+participant ":System" as System
+
+activate Admin
+
+    Admin -> System : asks to list BackOffice Users
+    activate System
+
+        System --> Admin : shows BackOffice Users
+    deactivate System
+
+
+@enduml

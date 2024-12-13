@@ -1,0 +1,59 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1019
+
+actor "Customer Manager" as User
+participant "ListCandidatesByPointsUI" as UI
+participant ":ListCandidatesByPointsController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+participant ":ApplicationService" as AppSvc
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsWithInterviewInAnalysis()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsWithInterviewInAnalysis()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+
+UI --> User : shows list of jobOpenings available
+
+User --> UI : selects jobOpenings (jobOpening)
+
+UI --> Controller :applicationsOfJobOpening(jobOpening)
+
+
+Controller --> AppRep : applicationsOfJobOpening(jobOpening)
+activate AppRep
+
+AppRep --> Controller : list of applications
+deactivate AppRep
+
+Controller --> AppSvc : sortApplicationsByInterviewPoints(applications)
+activate AppSvc
+
+AppSvc --> Controller : applications sorted
+deactivate AppSvc
+
+Controller --> UI : applications sorted
+deactivate Controller
+
+UI --> User : shows candidates sorted by interview points
+deactivate UI
+@enduml

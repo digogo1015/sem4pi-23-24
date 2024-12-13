@@ -1,0 +1,93 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1000
+
+
+
+actor "Admin" as User
+participant "AddUserUI" as UI
+participant ":AddUserController" as Controller
+participant ":UserManagementService" as Service
+participant ":UserBuilder" as Builder
+participant "user:SystemUser" as SysUs
+
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":UserRepository" as UsRep
+
+
+activate User
+
+User -> UI : show()
+
+UI -> UI : doShow()
+activate UI
+
+UI -> Controller : create()
+
+UI --> User : Ask user information
+
+User --> UI : Password, First Name, \n Last Name, E-mail
+
+UI --> User : Show List of Role Types
+
+User --> UI : Role Type
+
+UI -> Controller : addUser(password, firstName, \n lastName, email, roles)
+activate Controller
+
+Controller -> Service : registerNewUser(email, password, firstName, lastName, email, roles);
+activate Service
+
+Service -> Builder : create()
+
+Service -> Builder : with(username, password, name, email)
+
+Service -> Builder : withRoles(roles)
+
+Service -> Builder : build()
+activate Builder
+
+Builder -> SysUs : create (username, password, name, email, roles)
+activate SysUs
+
+SysUs --> Builder : user
+deactivate SysUs
+
+Builder --> Service : user
+deactivate Builder
+
+Service -> PersistenceContext : repositories()
+activate PersistenceContext
+
+PersistenceContext -> Rep : create
+
+PersistenceContext --> Service : factory
+deactivate PersistenceContext
+
+Service -> Rep : users()
+activate Rep
+
+Rep -> UsRep : create
+
+Rep --> Service : UsRep
+deactivate Rep
+
+Service -> UsRep : save(user)
+
+Service --> Controller : user
+deactivate Service
+
+Controller --> UI : user
+deactivate Controller
+
+UI --> User : display User Info
+deactivate UI
+
+
+
+@enduml

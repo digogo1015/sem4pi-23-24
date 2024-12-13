@@ -1,0 +1,94 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1000
+
+
+
+actor "Admin" as User
+participant "DeactivateUsersUI" as UI
+participant ":DeactivateUserController" as Controller
+participant ":UserManagementService" as Service
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":UserRepository" as UsRep
+participant ":SystemUser" as SysUs
+
+
+activate User
+
+    User -> UI : show()
+
+
+        UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : activeUsers()
+    activate Controller
+
+    Controller -> Service : activatedUsers()
+    activate Service
+
+    Service -> PersistenceContext : repositories()
+    activate PersistenceContext
+
+    PersistenceContext -> Rep : create()
+    activate Rep
+
+    Rep --> PersistenceContext
+    deactivate Rep
+
+    PersistenceContext --> Service : factory
+    deactivate PersistenceContext
+
+    Service -> Rep : users()
+    activate Rep
+
+    Rep -> UsRep : create()
+
+    Rep --> Service : userRepository
+    deactivate Rep
+
+    Service -> UsRep : findByActive(true)
+    activate UsRep
+
+    UsRep --> Service :
+    deactivate UsRep
+
+    Service --> Controller : activeUsersList
+    deactivate Service
+
+    Controller --> UI : activeUsersList
+    deactivate Controller
+
+    UI --> User : show List of Active Users
+
+    User -> UI : user
+
+    UI -> Controller : deactivateUser(user)
+    activate Controller
+
+    Controller -> Service : deactivateUser(user)
+    activate Service
+
+    Service -> SysUs : deactivate()
+
+    Service -> UsRep : save(user)
+
+    Service --> Controller : user
+    deactivate Service
+
+    Controller --> UI : user
+    deactivate Controller
+
+    UI --> User : shows operation success
+
+
+    deactivate Rep
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3002
+
+autonumber
+
+actor "Customer" as User
+participant ":CustomerApp" as CusApp
+participant ":FollowUpServer" as Server
+
+activate User
+
+    User -> CusApp: asks to list Job Openings
+        activate System
+
+    CusApp -> Server : (tcp)listMyJobOpenings
+    activate Server
+
+    Server --> CusApp : (tcp)listMyJobOpenings
+    deactivate Server
+
+    CusApp--> User : shows operation success
+        deactivate System
+
+
+@enduml

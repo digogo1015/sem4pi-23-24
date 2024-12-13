@@ -1,0 +1,91 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1010
+
+
+actor "CustomerManager" as User
+participant "OpenClosePhaseUI" as UI
+participant "OpenClosePhaseController" as Controller
+participant "JobOpeningRepository" as Rep
+participant "PhaseService" as Service
+participant "JobOpening" as job
+participant "RecruitmentProcess" as RecruitmentProcess
+
+
+
+activate User
+
+    User -> UI: asks to open/close a phase
+        activate UI
+
+    UI -> Controller: getListOfJobOpenings()
+        activate Controller
+
+        Controller -> Rep: jobOPeningByManager()
+            activate Rep
+            Rep --> Controller: jobOpenings
+            deactivate Rep
+        Controller --> UI: jobOpenings
+        deactivate Controller
+
+
+    UI--> User : shows list of job openings
+        deactivate
+
+    User -> UI: chosses a job opening
+        activate UI
+
+        UI -> Controller: showJobOpeningCurrentPhase(jobOpening)
+        activate Controller
+
+
+            Controller --> UI: phase
+            deactivate Controller
+
+    UI -> Controller: checkIfIsPossibleToOpenNextPhase(jobOpening)
+    activate Controller
+        Controller -> Service: checkIfIsPossibleToOpenNextPhase(jobOpening)
+            activate Service
+
+            Service --> Controller: isPossible
+            deactivate Service
+        Controller --> UI: isPossible
+        deactivate Controller
+
+
+    UI--> User : shows the current phase\n of the job opening and\n what is possible to do
+        deactivate
+
+    User -> UI: asks to close the phase
+        activate UI
+
+    UI -> Controller: openNextPhase(jobOpening)
+    activate Controller
+
+    Controller -> job : recruitmentProcess()
+    activate job
+
+    job -> RecruitmentProcess : openNextPhase()
+    activate RecruitmentProcess
+
+    RecruitmentProcess -> RecruitmentProcess : openNextPhase()
+
+    RecruitmentProcess --> job : sucess
+    deactivate
+
+    job --> Controller : sucess
+    deactivate
+
+    Controller --> UI: sucess
+    deactivate
+    
+
+    UI--> User : shows current phase and\n operation success
+        deactivate UI
+
+
+
+@enduml

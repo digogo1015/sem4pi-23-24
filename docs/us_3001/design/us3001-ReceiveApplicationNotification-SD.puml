@@ -1,0 +1,66 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3001
+
+participant "TcpCustomerUI" as UI
+
+participant "TcpSrv" as Server
+participant ":ApplicationsChangeNotificationController" as Controller
+
+participant ":NotificationService" as Service
+
+participant ":Notification" as Notification
+participant ":NotificationRepository" as Rep
+participant ":NotificationDTO" as DTO
+participant ":TcpUtils" as TcpUtils
+
+
+ -> Server : (tcp)listMyNotifications
+
+ Server -> Server :  showPhaseChangeNotifications(version, sIn, sOut)
+ activate Server
+
+ Server -> Controller : allNotViewedNotificationsByReceiver(email)
+ activate Controller
+
+Server -> Rep : allNotViewedNotificationsByReceiver(email)
+activate Rep
+
+Rep --> Server : notificationList
+deactivate Rep
+
+Controller -> Service: allNotViewedNotificationsByReceiver(notificationList)
+activate Service
+
+loop for each notification from notificationList
+
+Service -> Notification : changeNotificationState()
+
+Service -> Rep : save(notification)
+
+Service -> DTO : create()
+activate DTO
+
+DTO --> Service : dtoNotification
+deactivate DTO
+
+end
+
+Service --> Controller : dtoNotificationList
+deactivate Service
+
+Controller --> Server : dtoNotificationList
+deactivate Controller
+
+Server -> TcpUtils : serializeIterable(dtoNotificationList);
+activate TcpUtils
+
+TcpUtils --> Server : serial
+deactivate TcpUtils
+
+<-- Server : (tcp)serial
+deactivate Server
+@enduml

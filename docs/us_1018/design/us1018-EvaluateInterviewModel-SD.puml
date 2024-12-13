@@ -1,0 +1,110 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1018
+
+
+actor "Customer Manager" as User
+participant "EvaluateInterviewUI" as UI
+participant "EvaluateInterviewModelController" as Controller
+
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+
+participant "JobOpening" as JobOpening
+
+participant "Application" as Application
+
+
+participant "Plugin" as Plugin
+participant ":IntModClass" as IntMod
+
+
+
+
+activate User
+
+User -> UI : show()
+
+UI -> UI : doShow()
+activate UI
+
+UI -> Controller : create()
+
+UI -> Controller : allJobOpeningsWithInterviewInAnalysis()
+activate Controller
+
+Controller -> JobRep : allJobOpeningsWithInterviewInAnalysis()
+activate JobRep
+
+JobRep --> Controller : jobOpenings
+deactivate JobRep
+
+Controller --> UI : jobOpenings
+deactivate Controller
+
+UI --> User : shows list of jobOpenings available
+
+User --> UI : selects jobOpenings (jobOpening)
+
+UI -> Controller : applicationsNotKnown(jobOpening)
+activate Controller
+
+Controller -> AppRep : applicationsNotKnown(jobOpening)
+activate AppRep
+
+AppRep -> Controller : applications
+deactivate AppRep
+
+Controller --> UI : applications
+deactivate Controller
+
+UI -> Controller : evaluateInterviews(jobOpening, applications)
+activate Controller
+
+Controller -> JobOpening : jobOpening.interviewModel()
+activate  JobOpening
+
+JobOpening --> Controller : plugIn
+deactivate JobOpening
+
+Controller -> Plugin : filePath()
+activate Plugin
+
+Plugin --> Controller : solutionsPath
+deactivate Plugin
+
+loop for each application of applications
+
+Controller -> Application : interviewAnswerPath()
+activate Application
+
+Application --> Controller : answersFilePath
+deactivate Application
+
+Controller -> Plugin : plugIn.buildImporter()
+activate Plugin
+
+Plugin --> Controller : importer
+deactivate Plugin
+
+Controller -> IntMod : evaluateInterviewModel(solutionsPath, answersFilePath)
+activate IntMod
+
+IntMod --> Controller : score
+deactivate IntMod
+
+Controller -> Application : giveInterviewPoints(score)
+
+Controller -> AppRep : save(application)
+
+end
+
+Controller --> UI
+deactivate Controller
+
+UI --> User : shows operation success
+deactivate UI
+@enduml

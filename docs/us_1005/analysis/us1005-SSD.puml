@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1005
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to list applications for a job opening
+        activate System
+
+    System--> User : displays job openings
+        deactivate System
+
+    User -> System: selects job opening
+        activate System
+
+    System--> User : displays list of applications for a job opening
+        deactivate System
+
+@enduml

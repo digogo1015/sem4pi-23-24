@@ -1,0 +1,127 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1020
+
+participant "TCPServer" as Sv
+participant ":PublishResultsController" as Controller
+participant ":JobOpeningRepository" as JobRep
+participant ":ApplicationRepository" as AppRep
+participant ":EmailSender" as EmailSender
+participant ":EmailDTO" as EmailDTO
+participant ":NotificationService" as NotiSvc
+participant ":Application" as App
+participant ":JobOpening" as JobOpening
+
+
+activate Sv
+
+Sv -> Controller : findAcceptedNonNotifiedApplications()
+
+activate Controller
+
+Controller -> JobRep : findAcceptedNonNotifiedApplications()
+activate JobRep
+
+JobRep --> Controller : applications to Notify
+deactivate JobRep
+
+Controller --> Sv : applications to Notify
+
+loop for each application
+    Sv -> Controller : sendEmail(application)
+
+    Controller -> EmailSender : sendEmail(application)
+    activate EmailSender
+
+    EmailSender -> EmailDTO : EmailDTO(application)
+    activate EmailDTO
+
+    EmailDTO --> EmailSender : EmailDTO
+    deactivate EmailDTO
+
+
+    EmailSender -> NotiSvc : sendEmail(EmailDTO)
+    activate NotiSvc
+
+    NotiSvc --> EmailSender : emailSent
+    deactivate NotiSvc
+
+    EmailSender --> Controller
+    deactivate EmailSender
+
+    Controller --> Sv
+
+    Sv -> Controller : defineEmailResult(SENT)
+    Controller -> App : defineEmailResult(SENT)
+    activate App
+
+    App --> Controller
+    deactivate App
+    deactivate AppRep
+
+    Controller -> AppRep : save(Application)
+    activate AppRep
+
+    AppRep --> Controller
+    deactivate AppRep
+
+    Controller --> Sv
+end
+
+
+alt Not Sent
+note left of Sv
+    CustomerEmailState of JobOpening
+end note
+
+    Sv -> Controller : sendEmailForCustomer(customer ,applications)
+
+    Controller -> EmailSender : sendEmailForCustomer(customer ,applications)
+    activate EmailSender
+
+    EmailSender -> EmailDTO : EmailDTO(customer ,applications)
+    activate EmailDTO
+
+    EmailDTO --> EmailSender : EmailDTO
+    deactivate EmailDTO
+
+
+    EmailSender -> NotiSvc : sendEmailForCustomer(EmailDTO)
+    activate NotiSvc
+
+    NotiSvc --> EmailSender : emailSent
+    deactivate NotiSvc
+
+    EmailSender --> Controller
+    deactivate EmailSender
+
+    Sv -> Controller : defineCustomerNotification(SENT)
+    Controller -> JobOpening : defineCustomerNotification(SENT)
+    activate JobOpening
+
+    JobOpening --> Controller
+    deactivate JobOpening
+    deactivate JobRep
+
+    Controller -> JobRep : save(jobOpening)
+    activate JobRep
+
+    JobRep --> Controller
+    deactivate JobRep
+end
+
+    Controller --> Sv
+
+deactivate Controller
+
+
+
+
+
+
+
+
+@enduml

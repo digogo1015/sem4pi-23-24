@@ -1,0 +1,68 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3002
+
+participant "TcpCustomerUI" as UI
+
+participant "TcpSrv" as Server
+participant ":ListCustomerJobOpeningsController" as Controller
+
+participant ":CustomerRepository" as CusRep
+participant ":JobOpeningService" as Service
+
+participant ":JobOpeningDTO" as DTO
+participant ":JobOpeningRepository" as Rep
+participant ":TcpUtils" as TcpUtils
+
+
+ -> Server : (tcp)listMyJobOpenings
+
+ Server -> Server : listCustomerJobOpenings(version, sIn, sOut)
+ activate Server
+
+ Server -> Controller : allCustomerJobOpeningsWithRecruitmentProcess(username)
+ activate Controller
+
+Controller -> CusRep : findByUsername(username)
+activate CusRep
+
+CusRep --> Controller : customer
+deactivate CusRep
+
+Controller -> Service : allCustomerJobOpeningsWithRecruitmentProcess(Customer customer)
+activate Service
+
+Service -> Rep : findCustomerJobOpeningsWithRecruitmentProcess(customer)
+activate Rep
+
+Rep --> Service : customerJobOpenings
+deactivate Rep
+
+loop for each customerJobOpening
+
+Service -> DTO : create()
+activate DTO
+
+DTO --> Service : dtoJobOpening
+deactivate DTO
+
+end
+
+Service --> Controller : dtoJobOpeningList
+deactivate Service
+
+Controller --> Server : dtoJobOpeningList
+deactivate Controller
+
+Server -> TcpUtils : serializeIterable(dtoJobOpeningList);
+activate TcpUtils
+
+TcpUtils --> Server : serial
+deactivate TcpUtils
+
+<-- Server : (tcp)serial
+deactivate Server
+@enduml

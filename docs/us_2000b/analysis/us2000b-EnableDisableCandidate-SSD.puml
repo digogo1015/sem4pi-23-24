@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2000b
+
+autonumber
+
+actor "Operator" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to enable/disable candidate
+        activate System
+
+    System--> User : displays list of active/deactivate candidates
+        deactivate System
+
+    User -> System: selects candidate
+        activate System
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

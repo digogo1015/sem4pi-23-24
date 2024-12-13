@@ -1,0 +1,81 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1004
+
+
+actor "CostumerManager" as User
+participant "EditJobOpeningUI" as UI
+participant ":EditJobOpeningController" as Controller
+participant "RepositoryFactory" as Rep
+participant "JobOpening" as Job
+
+
+
+
+    activate User
+
+    User -> UI : show()
+    activate UI
+
+    UI -> UI : doShow()
+
+    UI -> Controller : create()
+
+    UI -> Controller: getListOfJobOpenings()
+    activate Controller
+
+    Controller -> Rep : jobOpeningByManager()
+    activate Rep
+
+    Rep --> Controller : jobOpenings
+    deactivate Rep
+
+    Controller --> UI : jobOpenings
+    deactivate Controller
+
+    UI --> User : shows jobOpenings and \n asks to select one
+
+    User -> UI :Selects a job Opening
+
+    UI -> Controller : getEditableFields(jobOpening)
+    activate Controller
+
+    Controller --> UI : editableFields
+    deactivate Controller
+
+    UI --> User : editableFields
+    deactivate UI
+
+    User -> UI : Chooses a editable field
+    activate UI
+
+    UI -> Controller : editField(jobOpening, field)
+    activate Controller
+
+    Controller -> Job : editField(field)
+    activate Job
+
+    Job -> Job : editField(field)
+
+    Job --> Controller : sucess
+    deactivate Job
+
+    Controller --> UI : sucess
+    deactivate
+
+    UI --> User : shows operation sucess
+    deactivate
+
+
+
+
+
+
+
+
+
+
+@enduml

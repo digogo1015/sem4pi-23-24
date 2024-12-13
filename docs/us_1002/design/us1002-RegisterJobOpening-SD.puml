@@ -1,0 +1,99 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2000a
+
+
+actor "Customer manager" as User
+participant "RegisterJobOpeningUI" as UI
+participant ":RegisterJobOpeningController" as Controller
+participant ":JobOpeningBuilder" as Builder
+participant "job:JobOpening" as SysUs
+
+participant "CustomerRepository" as CRep
+participant "PersistenceContext" as PersistenceContext
+participant ":JobOpeningRepository" as JORep
+participant ":JobOpeningBuilder" as CBuilder
+participant "RepositoryFactory" as Rep
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : findAllActive()
+activate Controller
+
+Controller ->  CRep : findAllActive()
+activate CRep
+
+CRep --> Controller : customerList
+deactivate
+
+Controller --> UI : customerList
+deactivate
+
+
+
+UI --> User : Show custumer list, and\n ask JobOpening information
+
+User -> UI :  job reference,\n job title, contract type,\n mode, address, customer,\n number of vacancies, description
+
+UI -> Controller : registerJobOpening(job reference,\n job title, contract type,\n mode, address, customer,\n number of vacancies, description)
+activate Controller
+
+
+Controller -> Builder : create()
+
+Controller -> Builder : with(job reference,\n job title, contract type,\n mode, address, customer,\n number of vacancies, description)
+
+
+Controller -> Builder : build()
+activate Builder
+
+Builder -> SysUs : create (job reference,\n job title, contract type,\n mode, address, customer,\n number of vacancies, description)
+activate SysUs
+
+SysUs --> Builder : job
+deactivate SysUs
+
+Builder --> Controller : job
+deactivate Builder
+
+Controller -> PersistenceContext : repositories()
+activate PersistenceContext
+
+PersistenceContext -> Rep : create
+
+PersistenceContext --> Controller : factory
+deactivate PersistenceContext
+
+Controller -> Rep : jobs()
+activate Rep
+
+Rep -> JORep : create
+
+Rep --> Controller : JORep
+deactivate Rep
+
+Controller -> JORep : save(job)
+
+Controller --> UI : operations success
+deactivate Controller
+
+
+
+
+
+UI --> User : display operation success Info
+deactivate UI
+
+
+
+@enduml

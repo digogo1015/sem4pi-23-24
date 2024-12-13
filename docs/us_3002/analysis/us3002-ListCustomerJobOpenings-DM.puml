@@ -1,0 +1,41 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class Title <<ValueObject>>
+class NumberOfVacancies <<ValueObject>>
+class JobReference <<Value Object>> {}
+class RecruitmentProcess <<Entity>>{}
+class Phase <<Entity>>{}
+class PhaseName <<ValueObject>>
+class PhaseState <<ValueObject>>
+
+}
+
+package CustomerAggregate {
+
+class Customer <<Entity>> \n <<root>>{}
+
+class EMail <<ValueObject>>
+}
+
+
+JobOpening "0..1" --> "1" JobReference : identified by
+JobOpening "*" -->  "1" Customer : requested by
+JobOpening "1" -- "1" NumberOfVacancies : includes
+JobOpening "*" --> "1" Title : characterized by
+JobOpening "*" --> "0..1" RecruitmentProcess : selects
+
+Customer "1" --> "1" EMail : uses
+
+RecruitmentProcess *-- Phase
+Phase "1" --> "1" PhaseName : named
+Phase "1" --> "1" PhaseState : presents itself in
+@enduml

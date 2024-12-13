@@ -1,0 +1,13 @@
+@startuml
+skinparam packageStyle rectangle
+
+left to right direction
+    actor as "Costumer Manager"
+
+rectangle {
+    usecase "Rank Candidates" as UC1
+
+    actor --> UC1
+
+}
+@enduml

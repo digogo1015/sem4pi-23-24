@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1010
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to open/close a phase
+        activate System
+
+    System--> User : shows list of job openings
+        deactivate
+
+    User -> System: chosses a job opening
+        activate System
+
+    System--> User : shows the current phase\n of the job opening and\n what is possible to do
+        deactivate
+
+    User -> System: asks to close the phase
+        activate System
+
+    System--> User : shows current phase and\n operation success
+        deactivate System
+
+@enduml

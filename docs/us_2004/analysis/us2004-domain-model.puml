@@ -1,0 +1,58 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model - US2004
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class JobReference <<Value Object>> {}
+class RecruitmentProcess <<Entity>>{}
+class Phase <<Entity>>{}
+class PhaseName <<ValueObject>>
+class PhaseState <<ValueObject>>
+
+}
+
+package ApplicationAggregate {
+
+class Application <<Entity>> \n <<root>>{}
+class ApplicationID <<ValueObject>>{}
+class ApplicationState <<ValueObject>>
+class ApplicationRequirementsFile <<ValueObject>>
+
+}
+
+
+package PluginAggregate {
+class Plugin <<Entity>> \n <<root>>{
+}
+class PluginType  <<Value Object>>
+
+class RequirementsSpecification <<Value Object>>{}
+}
+
+
+Plugin "1" --> "1" PluginType : characterized by
+PluginType <|-- RequirementsSpecification
+
+JobOpening "0..1" --> "1" JobReference : identified by
+JobOpening "*" ---> "0..2" Plugin : selects
+JobOpening "*" --> "0..1" RecruitmentProcess : selects
+
+
+Application "*" --> "1" JobOpening : submitted for
+Application "1" --> "1" ApplicationID : identified by
+Application "1" --> "1" ApplicationState : presents itself in
+Application "1" --> "0..1" ApplicationRequirementsFile : origins
+
+
+RecruitmentProcess *-- Phase
+Phase "1" --> "1" PhaseName : named
+Phase "1" --> "1" PhaseState : presents itself in
+
+
+@enduml

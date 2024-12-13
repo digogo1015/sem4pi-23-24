@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2000b
+
+
+
+actor "Operator" as User
+participant "DeactivateCandidateUI" as UI
+participant ":DeactivateCandidateController" as Controller
+participant ":UserManagementService" as Service
+
+
+participant ":CandidateRepository" as CanRep
+participant ":UserRepository" as UsRep
+participant ":SystemUser" as SysUs
+
+
+activate User
+
+    User -> UI : show()
+
+
+        UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : allActiveUsers()
+    activate Controller
+
+    Controller -> CanRep : findAllActive()
+    activate CanRep
+
+    CanRep --> Controller : activeCandidateList
+    deactivate CanRep
+
+    Controller --> UI : activeCandidateList
+    deactivate Controller
+
+    UI --> User : show List of Active Candidates
+
+    User -> UI : selects candidate
+
+    UI -> Controller : deactivateCandidate(user)
+    activate Controller
+
+    Controller -> Service : deactivateUser(user)
+    activate Service
+
+    Service -> SysUs : deactivate()
+
+    Service -> UsRep : save(user)
+
+    Service --> Controller : user
+    deactivate Service
+
+    Controller --> UI : user
+    deactivate Controller
+
+    UI --> User : shows operation success
+
+@enduml

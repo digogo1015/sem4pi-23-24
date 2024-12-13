@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3003
+
+autonumber
+
+actor "Customer" as User
+participant ":CustomerApp" as CusApp
+participant ":FollowUpServer" as Server
+
+activate User
+
+    User -> CusApp: asks to phase change notifications
+        activate System
+
+    CusApp -> Server : (tcp)listMyNotifications
+    activate Server
+
+    Server --> CusApp : (tcp)MyNotifications
+    deactivate Server
+
+    CusApp--> User : shows operation success
+        deactivate System
+
+
+@enduml

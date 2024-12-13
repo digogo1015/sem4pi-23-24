@@ -1,0 +1,80 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1006
+
+
+
+actor "Customer Manager" as User
+participant "ShowCandidateInfoUI" as UI
+participant ":ShowCandidateInfoController" as Controller
+participant ":CandidateService" as Service
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":CandidateRepository" as CanRep
+
+activate User
+
+    User -> UI : show()
+
+    UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : allActiveUsers()
+    activate Controller
+
+    Controller -> Service : allActiveUsers()
+    activate Service
+
+    Service -> PersistenceContext : repositories()
+    activate PersistenceContext
+
+    PersistenceContext -> Rep : create()
+    activate Rep
+
+    Rep --> PersistenceContext
+    deactivate Rep
+
+    PersistenceContext --> Service : factory
+    deactivate PersistenceContext
+
+    Service -> Rep : users()
+    activate Rep
+
+    Rep -> CanRep : create()
+
+    Rep --> Service : userRepository
+    deactivate Rep
+
+    Service -> CanRep : findAllActive()
+    activate CanRep
+
+    CanRep --> Service :
+    deactivate CanRep
+
+    Service --> Controller : allCandidates
+
+    Controller -> Service : sortUserAlphabetically(allCandidates)
+
+    Service --> Controller : allCandidates
+    deactivate Service
+
+    Controller --> UI : allCandidates
+    deactivate Controller
+
+    UI --> User : displays list of\n candidates
+
+    User -> UI : selects candidate the\n check information
+
+    UI --> User : displays information\n of candidate
+    deactivate UI
+
+
+    deactivate Rep
+
+@enduml

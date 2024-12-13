@@ -1,0 +1,84 @@
+__________________
+SPRINT B
+__________________
+
+USG007 ->  Não representado ou relevante no modelo de dominio.
+
+US1000 -> Não representado ou relevante no modelo de dominio.
+
+US1001 -> Customer é uma entidade e a raiz de um agregado, sendo assim algo instanciado de forma independente
+
+US1002 -> JobOpening é uma entidade e a raiz de um agregado, sendo assim algo instanciado de forma independente , neste momento fica com o estado de "incompleto" até as mudanças necessárias sejam realizadas
+
+US1003 -> Sendo este a raiz de um agregado, irá então haver um repositorio relativo a este, podendo assim listar instancias deste tipo
+
+US2000a -> Candidate é uma entidade e a raiz de um agregado, sendo assim algo instanciado de forma independente
+
+US2000c -> Sendo este a raiz de um agregado, irá então haver um repositorio relativo a este, podendo assim listar instancias deste tipo
+
+US2001 ->  Serão importados como ApplicationInfoFile
+
+US2002 -> Application é uma entidade e a raiz de um agregado, sendo assim algo instanciado de forma independente. Os ficheiros serão importados como ApplicationInfoFile
+
+US1005 -> Através da ligação que possuimos entre jobOpening e applications, tudo indica que um jobOpening terá referenciado a este diversas applications, podendo listá-las de tal forma.
+
+US1006 -> Apresentar os values de candidate
+
+US1006b -> Através da ligação que possuimos entre candidate e applications, tudo indica que um cadidate terá referenciado a ele diversas applications, podendo listá-las de tal forma.
+
+US1007 -> Um recruitment Process, possui as suas fases, tendo estas um estado e periodo onde decorá a mesma. Sendo assim periodo e estado são value objects de fase pois estes serão editados. Podendo este evento alterar o estado de JobOpeningState
+
+US1008 -> Plugin é uma entidade e a raiz de um agregado, sendo assim algo instanciado de forma independente. Existem dois tipos de Plugins, Interview Model e Requirement Specification.
+
+US1009 -> Ligação entre JobApllication e Requirement Specification de modo a que possa haver zero ou um Requirement Specificaion relacionado para um JobOpening
+
+US1011 -> Ligação entre JobApllication e um Interview Model de modo a que possa haver zero ou um Interview Model relacionado para um JobOpening 
+As Interviews de JobOpening serão feitas para cada application relacionada a este, havendo então uma relação entre Interview e Application, onde esta pode não ocorrer.
+Este evento atribuirá um Score ao candidato
+
+US1012 -> Este ficheiro template será gerado através de um Interview Model, que será postriormente preenchido por um candidato e dará origem a um ficheiro de respostas, representado como InterviewAnswerFile.
+
+US2003 -> Eventualmente irá ser gerado um ficheiro template através de um Requirement Specidication, que será então comparado com um outro ficheiro onde se encontram as informações relativas a um cadidato ao seu curriculo.
+
+_______________________
+SPRINT C
+_______________________
+
+US1013 -> Cada application poderá ser rankeada/ordenada pelo customer manager.
+
+US1004 -> Sendo uma jobOpening uma entidade, fora os seu id (JobReference), qualquer outro atributo poderá ser editado.
+
+US2000b -> Application possui um estado, sendo este um value object de application, logo editavél em cada uma. Cliente refere que o estado é de uma candidatura Q32
+
+US1010 -> As fases de um Recruitment Process possuem um estado, sendo este um value object de fase, logo editavél em cada uma. 
+
+US1014 -> Para cada Interview a realizar, temos associado um InterviewSchedule tendo este uma data e hora também ssociado.
+
+US1015 -> Realização do processo exprecificado na US2003, gerando o Screening result.
+
+US1016 -> Notification será enviada ao candidato com a NotificationDescription sobre o screeningResult
+
+US1017 -> This text file is represented by the InterviewAnswersFile and it is associated with an Interview.
+
+US1018 -> Realização do processo exprecificado dará origem a um Score relativo a  cada Interview.
+
+US1019 -> Cada Interview de uma candidatura possui um Score, sendo este usado para o efeito desta US.
+
+US1020 -> A seleção de candidatos será um conjunto dos melhores rankeados, assim sendo poderemos enviar uma notificação tanto para os candidates como para o costumer, visto que
+          existe a ligação de NotificationDescription para Rank.
+
+US1021 -> Apresentar os objetos associados a Application.
+
+US2001b -> Serão importados como ApplicationInfoFile
+
+US2004 -> Remete para o ficheiro que irá ser gerado com as informações do candidato e da seu curriculo na US2003.
+
+US3000 -> Cada candidato poderá listar as suas candidaturas (US1005), sendo que irá ser apresentado junto destas o numero de candidaturas existente para o jobOffer referente a cada uma.
+
+US3001 -> Este processo aconterá quando o ocorre uma mudança no ApplicationState, visto que existe a ligação de ApplicationState com NotificationDescription
+
+US3002 -> As job Opening podem ser listadas, sendo o atributo "Active Since" referente ao BeginnindDate da fase de Application.
+
+US3003 -> Este processo aconterá sempre que ocorrer uma mudança no PhaseState uma fase do Recruitment Process de um JobOpenning, visto que existe a ligação de Phase com NotificationDescription
+
+US4000 -> Os ficheiros uploaded pelo candidato são representados como "ApplicationInfoFile"

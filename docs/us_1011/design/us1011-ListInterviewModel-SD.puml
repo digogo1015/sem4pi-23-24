@@ -1,0 +1,108 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1011
+
+
+
+actor "Customer Manager" as User
+participant "SelectInterviewModelUI" as UI
+participant ":SelectInterviewModelController" as Controller
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":JobOpeningRepository" as JobRep
+participant ":PluginRepository" as PluRep
+participant ":JobOpening" as JobOpening
+
+
+activate User
+
+    User -> UI : show()
+
+        UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : allJobOpenings()
+    activate Controller
+
+    Controller -> PersistenceContext : repositories()
+    activate PersistenceContext
+
+    PersistenceContext -> Rep : create()
+    activate Rep
+
+    Rep --> PersistenceContext
+    deactivate Rep
+
+    PersistenceContext --> Controller : factory
+    deactivate PersistenceContext
+
+    Controller -> Rep : jobopenings()
+    activate Rep
+
+    Rep -> JobRep : create()
+
+    Rep --> Controller : jobOpeningRepository
+    deactivate Rep
+
+    Controller -> JobRep : findAll()
+    activate JobRep
+
+    JobRep --> Controller : jobOpenings
+    deactivate JobRep
+
+
+    Controller --> UI : jobOpenings
+    deactivate Controller
+
+    UI --> User : displays list of\n jobOpenings
+
+    User -> UI : selects a job opening
+
+
+        UI -> Controller : allInterviewModels()
+        activate Controller
+
+            Controller -> Rep : jobopenings()
+            activate Rep
+
+            Rep -> PluRep : create()
+
+            Rep --> Controller : pluginRepository
+            deactivate Rep
+
+            Controller -> PluRep : findAll()
+            activate PluRep
+
+            PluRep --> Controller : interviewModels
+            deactivate PluRep
+
+            Controller --> UI : interviewModels
+
+            UI --> User : lists interview model\n plugins in the system
+
+            User -> UI : selects a interview model
+
+            UI -> Controller : selectInterviewModel\n(interviewModel, jobOpening)
+            activate Controller
+
+            Controller -> JobOpening : InterviewModelSelected(plugIn)
+            activate JobOpening
+
+            JobOpening --> Controller
+            deactivate JobOpening
+
+            Controller -> JobRep : save(jobOpening)
+
+            Controller --> UI
+
+            UI --> User : Show operation success
+
+    deactivate Rep
+
+@enduml

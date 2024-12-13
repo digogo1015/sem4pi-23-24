@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2000a
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to setup the phases
+        activate System
+
+    System--> User : shows Job Openings and asks\n to choose one
+        deactivate System
+
+    User -> System: types requested data (jobOpening,\n hasInterview, dates)
+        activate System
+
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

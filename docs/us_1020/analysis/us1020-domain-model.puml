@@ -1,0 +1,93 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model - US1020
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class NumberOfVacancies <<ValueObject>>
+class JobReference <<Value Object>> {}
+class RecruitmentProcess <<Entity>>{}
+class Phase <<Entity>>{}
+class PhaseName <<ValueObject>>
+class PhaseState <<ValueObject>>
+
+}
+
+package ApplicationAggregate {
+
+class Application <<Entity>> \n <<root>>{}
+class ApplicationID <<ValueObject>>{}
+class ApplicationState <<ValueObject>>
+
+
+}
+package CustomerAggregate {
+
+class Customer <<Entity>> \n <<root>>{}
+class CompanyName <<ValueObject>>
+}
+
+package CandidateAggregate {
+
+class Candidate <<Entity>> \n <<root>>{
+}
+
+class FirstName <<Value Object>>
+class LastName <<Value Object>>
+
+class PhoneNumber <<Value Object>>{}
+}
+
+
+
+class EMail <<Value Object>>{}
+
+
+
+
+package RankAggregate {
+class Ranking <<Entity>> \n <<root>>{}
+class Order <<Value Object>>
+class Rank <<Value Object>>
+}
+
+
+
+
+JobOpening "0..1" --> "1" JobReference : identified by
+JobOpening "*" -->  "1" Customer : requested by
+JobOpening "1" -- "1" NumberOfVacancies : includes
+JobOpening "*" --> "0..1" RecruitmentProcess : selects
+
+
+Application "*" --> "1" JobOpening : submitted for
+Application "*" --> "1" Candidate : submitted by
+Application "1" --> "1" ApplicationID : identified by
+Application "1" --> "0..1" Rank : ordered by
+Application "1" --> "1" ApplicationState : presents itself in
+
+
+Customer "1" --> "1" EMail : uses
+Customer "1" --> "1" CompanyName : is named
+
+Candidate "1" --> "1" EMail : identified by
+Candidate "1" --> "1" PhoneNumber : uses
+Candidate "1" --> "1" FirstName : called by
+Candidate "1" --> "1" LastName : called by
+
+RecruitmentProcess *-- Phase
+Phase "1" --> "1" PhaseName : named
+Phase "1" --> "1" PhaseState : presents itself in
+
+
+Ranking "1" --> "1" JobOpening : is about
+Ranking "1" -> "1.*" Order : defined by
+Order "1" -> "1" Rank : defined
+Order "1" -> "1.*" Application : defined
+
+@enduml

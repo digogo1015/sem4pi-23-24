@@ -1,0 +1,5 @@
+INPUT_DIR=../input_dir
+OUTPUT_DIR=../output_dir
+NUM_OF_CHILDS=70
+SLEEP_TIME=1
+

@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1008
+
+autonumber
+
+actor "Language Engineer" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to deploy a plugin
+        activate System
+
+    System--> User : requests data
+        deactivate System
+
+    User -> System: types requested data (designation,\n description, plugin type, class name)
+        activate System
+
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml

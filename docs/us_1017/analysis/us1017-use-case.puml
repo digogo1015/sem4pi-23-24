@@ -1,0 +1,13 @@
+@startuml
+skinparam packageStyle rectangle
+
+left to right direction
+    actor as "Customer Manager"
+
+rectangle {
+    usecase "Upload Interveiw File,\n with the answers from the Candidate" as UC1
+
+    actor --> UC1
+
+}
+@enduml

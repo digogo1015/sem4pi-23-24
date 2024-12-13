@@ -1,0 +1,57 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model
+
+package JobOpeningAggregate {
+
+class JobOpening <<Entity>> \n <<root>>{
+}
+class JobReference <<Value Object>> {}
+class RecruitmentProcess <<Entity>>{}
+class Phase <<Entity>>{}
+class PhaseName <<ValueObject>>
+class PhaseState <<ValueObject>>
+
+}
+
+package CustomerAggregate {
+
+class Customer <<Entity>> \n <<root>>{}
+
+class EMail <<ValueObject>>
+}
+
+package NotificationAggregate{
+class Notification <<Entity>>{}
+class ID <<ValueObject>>
+class NotificationDate <<ValueObject>>
+class NotificationState <<ValueObject>>
+class NotificationType <<ValueObject>>
+class SenderEmail <<ValueObject>>
+class ReceiverEmail <<ValueObject>>
+class Message <<ValueObject>>
+}
+
+
+JobOpening "0..1" --> "1" JobReference : identified by
+JobOpening "*" -->  "1" Customer : requested by
+JobOpening "*" --> "0..1" RecruitmentProcess : selects
+
+Customer "1" --> "1" EMail : uses
+
+RecruitmentProcess *-- Phase
+Phase "1" --> "1" PhaseName : named
+Phase "1" --> "1" PhaseState : presents itself in
+
+Notification "1" --> "1" NotificationDate : sent at
+Notification "1" --> "1" SenderEmail : sent by
+Notification "1" --> "1" ReceiverEmail : sent to
+ReceiverEmail "1" --> "1" EMail : derives from
+Notification "1" --> "1" Message : has
+Notification "1" --> "1" ID : identified by
+Notification "*" --> "1" NotificationState : characterized by
+Notification "*" --> "1" NotificationType : characterized by
+@enduml

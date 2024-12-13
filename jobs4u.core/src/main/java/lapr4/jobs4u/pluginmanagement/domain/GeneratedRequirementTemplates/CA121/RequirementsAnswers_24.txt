@@ -1,0 +1,6 @@
+# Enter the number of years of experience (integer)
+Experience years: 5
+# Select one degree (None; Bachelor; Master; PhD)
+Academic degree: Bachelor
+# Select one or more programming languages you are proficient in (None; Bachelor; Master; PhD)
+Academic degree: None

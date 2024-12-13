@@ -1,0 +1,39 @@
+vvv
+
+
+Is Java Good ? [TRUE/FALSE]
+Answer: TRUE
+
+Tell why you may find Java good ? [LIMIT OF ANSWER SIZE: 50 CHARS]
+Answer: Because yes
+
+What programing language should be used for system XPTO? [MULTIPLE CHOICE]
+1. Java
+2. C
+3. PHP
+4. Javascript
+5. Typescript
+batatas: 1,2
+
+What programing language should be used for system XPTO? [SINGLE CHOICE]
+1. Java
+2. C
+3. PHP
+4. Javascript
+5. Typescript
+Answer: 4
+
+What is your favourite integer number ? [INTEGER ANSWER]
+Answer: 3
+
+What is your favourite decimal number ? [DECIMAL ANSWER WITH TWO DECIMAL PLACES]
+Answer: 5.50
+
+When is your birthday ? [DATE ANSWER WITH FORMAT: DD/MM/YYYY]
+Answer: 19/11/2014
+
+What is the time you should be here ? [TIME ANSWER WITH FORMAT: hh:mm]
+Answer: 00:00
+
+In the interval of numbers 1 to 10 what is your favourite number ? [ANSWER BETWEEN:1 - 10]
+Answer: 10

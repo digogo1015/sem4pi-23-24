@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2000a
+
+
+actor "Customer manager" as User
+participant "ListJobOpeningUI" as UI
+participant ":ListJobOpeningController" as Controller
+
+participant ":JobOpeningRepository" as CRep
+
+activate User
+
+User -> UI : show()
+
+activate UI
+UI -> UI : doShow()
+
+UI -> Controller : create()
+
+UI -> Controller : findAll()
+activate Controller
+
+Controller ->  CRep : findAll()
+activate CRep
+
+CRep --> Controller : jobOpeningList
+deactivate
+
+Controller --> UI : jobOpeningList
+deactivate
+
+
+
+UI --> User : Shows job opening list
+
+
+
+
+@enduml

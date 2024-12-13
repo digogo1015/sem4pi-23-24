@@ -1,0 +1,54 @@
+@startuml
+'skinparam linetype ortho
+'left to right direction
+hide circle
+hide methods
+title Domain Model
+
+
+package ApplicationAggregate {
+
+class Application <<Entity>> \n <<root>>{}
+class ApplicationID <<ValueObject>>{}
+class ApplicationState <<ValueObject>>
+}
+
+
+
+package CandidateAggregate {
+
+class Candidate <<Entity>> \n <<root>>{
+}
+
+class EMail <<ValueObject>>{}
+}
+
+package NotificationAggregate{
+class Notification <<Entity>>{}
+class ID <<ValueObject>>
+class NotificationDate <<ValueObject>>
+class NotificationState <<ValueObject>>
+class NotificationType <<ValueObject>>
+class SenderEmail <<ValueObject>>
+class ReceiverEmail <<ValueObject>>
+class Message <<ValueObject>>
+}
+
+
+Application "1" --> "1" ApplicationID : identified by
+Application "1" --> "1" ApplicationState : presents itself in
+
+Application "*" --> "1" Candidate : submitted by
+
+Candidate "1" --> "1" EMail : identified by
+
+
+Notification "1" --> "1" NotificationDate : sent at
+Notification "1" --> "1" SenderEmail : sent by
+Notification "1" --> "1" ReceiverEmail : sent to
+ReceiverEmail "1" --> "1" EMail : derives from
+Notification "1" --> "1" Message : has
+Notification "1" --> "1" ID : identified by
+Notification "*" --> "1" NotificationState : characterized by
+Notification "*" --> "1" NotificationType : characterized by
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2004
+
+autonumber
+
+actor "Operator" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to upload Requirements Files
+        activate System
+
+    System--> User : Lists Job Openings
+        deactivate System
+
+    User -> System: Selects a Job Opening to verify Files
+        activate System
+
+    System--> User : Shows Operation Success
+            deactivate System
+
+@enduml

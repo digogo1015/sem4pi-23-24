@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3001
+
+autonumber
+
+actor "Candidate" as User
+participant ":CandidateApp" as CanApp
+participant ":FollowUpServer" as Server
+
+activate User
+
+    User -> CanApp: asks to phase change notifications
+        activate CanApp
+
+    CanApp -> Server : (tcp)listMyNotifications
+    activate Server
+
+    Server --> CanApp : (tcp)MyNotifications
+    deactivate Server
+
+    CanApp--> User : shows operation success
+        deactivate CanApp
+
+
+@enduml

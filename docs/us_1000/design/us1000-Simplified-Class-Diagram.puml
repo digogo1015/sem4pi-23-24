@@ -1,0 +1,77 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam lineType polyline
+
+
+skinparam classAttributeIconSize 0
+
+class ListBackOfficeUsersUI{}
+
+class ListBackOfficeUsersController{}
+
+class UserManagementService{}
+
+interface UserRepository{
+Iterable<SystemUser> findAll();
+}
+
+class JpaUserRepository
+
+class JpaBaseRepository
+
+class InMemoryUserRepository
+
+class InMemoryDomainRepository
+
+interface DomainRepository{
+Iterable<SystemUser> findAll();
+}
+
+class DeactivateUsersUI
+
+class ActivateUsersUI
+
+class AddUserUI
+
+class DeactivateUsersController
+
+class ActivateUsersController
+
+class AddUserController
+
+ListBackOfficeUsersUI ..> ListBackOfficeUsersController
+
+DeactivateUsersUI ..> DeactivateUsersController
+
+ActivateUsersUI ..> ActivateUsersController
+
+AddUserUI ..> AddUserController
+
+
+ListBackOfficeUsersController ...> UserManagementService
+
+DeactivateUsersController ...> UserManagementService
+
+ActivateUsersController ...> UserManagementService
+
+AddUserController ...> UserManagementService
+
+
+UserManagementService .> UserRepository
+
+UserRepository <|.. JpaUserRepository : implements
+
+UserRepository <|.. InMemoryUserRepository : implements
+
+JpaUserRepository ..|> JpaBaseRepository : extends
+
+InMemoryUserRepository ..|> InMemoryDomainRepository : extends
+
+JpaBaseRepository ..|> DomainRepository : implements
+
+InMemoryDomainRepository ..|> DomainRepository : implements
+
+
+
+@enduml

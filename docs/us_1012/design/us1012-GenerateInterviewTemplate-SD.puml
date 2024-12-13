@@ -1,0 +1,98 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2003
+
+actor "Customer Manager" as User
+participant "GenerateInteviewsTemplateUI" as UI
+participant ":GenerateInteviewsTemplateController" as Controller
+participant ":JobOpeningService" as Service
+
+participant "PersistenceContext" as PersistenceContext
+participant "RepositoryFactory" as Rep
+participant ":JobOpeningRepository" as JORep
+
+activate User
+
+    User -> UI : show()
+
+    UI --> UI : doShow()
+    activate UI
+
+    UI --> Controller : create()
+
+    UI -> Controller : allJobOpenings()
+    activate Controller
+
+    Controller -> Service : allJobOpenings()
+    activate Service
+
+    Service -> PersistenceContext : repositories()
+    activate PersistenceContext
+
+    PersistenceContext -> Rep : create()
+    activate Rep
+
+    Rep --> PersistenceContext
+    deactivate Rep
+
+    PersistenceContext --> Service : factory
+    deactivate PersistenceContext
+
+    Service -> Rep : allJobOpenings()
+    activate Rep
+
+    Rep -> JORep : create()
+
+    Rep --> Service : jobOpeningRepository
+    deactivate Rep
+
+    Service -> JORep : allJobOpenings()
+    activate JORep
+
+    JORep --> Service :
+    deactivate JORep
+
+    Service --> Controller : allJobOpenings
+
+    deactivate Service
+
+    Controller --> UI : allJobOpenings
+    deactivate Controller
+
+    UI --> User : displays list of\n job openings
+
+    User -> UI : selects job opening \n to generate template
+
+    UI -> Controller : generateTemplateFile()
+
+    activate Controller
+
+    Controller -> Service : getPlugin()
+
+    activate Service
+
+    Service --> Controller : plugin
+
+    deactivate Service
+
+    Controller -> Service : generateTemplateFile(Plugin)
+
+    activate Service
+
+    Service --> Controller :
+
+    deactivate Service
+
+    Controller --> UI : operation success
+    deactivate Controller
+
+    UI --> User : displays operation\n success
+
+    deactivate UI
+
+    deactivate Rep
+
+@enduml

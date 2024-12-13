@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2000a
+
+autonumber
+
+actor "Customer Manager" as User
+participant ":System" as System
+
+activate User
+
+    User -> System: asks to register a candidate
+        activate System
+
+    System--> User : Show custumer list, and\n ask JobOpening information
+        deactivate System
+
+    User -> System: types requested data (job reference,\n job title, contract type,\n mode, address, customer,\n number of vacancies, description)
+        activate System
+
+
+    System--> User : shows operation success
+        deactivate System
+
+@enduml
